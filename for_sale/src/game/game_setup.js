@@ -1,5 +1,5 @@
 
-import Player from "./player";
+import Player from "./player.js";
 
 
 
@@ -18,7 +18,8 @@ import Player from "./player";
     deck.push({
       id: i,
       name: `Property ${i}`,
-      value: Math.floor(Math.random() * 1000) + 100, // Random value between 100 and 1100
+      value: i * 1000,
+      state: "available", // can be "available", "sold", or "auction"
     });
   }
 
@@ -43,9 +44,10 @@ import Player from "./player";
 
 
   
-
+  console.log("Deck:", deck);
 
   console.log("Game setup complete!");
 }
 
+gameSetup(3); // Call the game setup function with the desired number of players (e.g., 3)
 export default gameSetup;
