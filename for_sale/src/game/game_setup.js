@@ -1,27 +1,17 @@
-
 import Player from "./player.js";
+import generateDeck from "./deck.js";
 
 
 
- function gameSetup(numberOfPlayers = 3) {
+function gameSetup(numberOfPlayers = 3) {
   // Initialize game state, load assets, set up event listeners, etc.
 
-  let players = [];  
+  const players = [];
   for (let i = 1; i <= numberOfPlayers; i++) {
     players.push(new Player(`Player ${i}`));
   }
 
-
-   let deck = []; // Initialize the deck of cards (properties for sale)
-  
-   for (let i = 1; i <= 30; i++) {
-    deck.push({
-      id: i,
-      name: `Property ${i}`,
-      value: i * 1000,
-      state: "available", // can be "available", "sold", or "auction"
-    });
-  }
+  const deck = generateDeck();
 
 
   console.log("Players:", players);
@@ -37,9 +27,9 @@ import Player from "./player.js";
     startingMoney = 17000;
   }
 
-    players[0].money = startingMoney;
-    players[1].money = startingMoney;
-    players[2].money = startingMoney;
+  players.forEach((player) => {
+    player.money = startingMoney;
+  });
 
 
 
@@ -47,7 +37,14 @@ import Player from "./player.js";
   console.log("Deck:", deck);
 
   console.log("Game setup complete!");
+
+  return {
+    players,
+    deck,
+    startingMoney,
+    round: 1,
+    stage: "Auction",
+  };
 }
 
-gameSetup(3); // Call the game setup function with the desired number of players (e.g., 3)
 export default gameSetup;
