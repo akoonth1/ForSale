@@ -17,6 +17,90 @@
   }
 }
 
+.entry-screen {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(circle at top, var(--accent-bg), transparent 60%);
+}
+
+.entry-card {
+  width: min(420px, 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+  padding: 22px;
+  text-align: left;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.entry-title {
+  margin: 0;
+  font-size: 28px;
+}
+
+.entry-subtitle {
+  margin: 0;
+}
+
+.entry-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.entry-input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.entry-toggle-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.entry-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.entry-button {
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 15px;
+  font-weight: 700;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.entry-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.entry-status {
+  margin: 0;
+  font-size: 13px;
+}
+
+.entry-error {
+  margin: 0;
+  font-size: 13px;
+  color: #b54708;
+  font-weight: 600;
+}
+
 .game-stage-bar {
   position: sticky;
   top: 0;
@@ -37,21 +121,204 @@
   letter-spacing: 0.4px;
 }
 
-.starting-funds-bar {
+.game-stage-presence {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.property-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.bid-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--accent-bg);
+  width: 100%;
+  max-width: 350px;
+  box-sizing: border-box;
+}
+
+.bid-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text);
+}
+
+.bid-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bid-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.bid-amount {
+  min-width: 100px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.give-up-btn {
+  border: 1px solid #dc2626;
+  border-radius: 8px;
+  background: transparent;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.give-up-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.spectator-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.player-status-bar {
   margin-top: auto;
   width: 100%;
   padding: 12px 16px;
   border-top: 1px solid var(--border);
   background: color-mix(in srgb, var(--bg) 92%, transparent);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.starting-funds-label {
-  margin: 0;
-  font-weight: 600;
+.player-status-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.player-status-row.is-current-player {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+}
+
+.player-status-name {
+  font-weight: 700;
+  font-size: 14px;
   color: var(--text-h);
-  font-size: 16px;
+  min-width: 80px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-number-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
   letter-spacing: 0.4px;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.player-status-funds {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--accent);
+  min-width: 90px;
+}
+
+.player-round-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text);
+}
+
+.player-round-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.player-round-dot.is-active {
+  background: #16a34a;
+}
+
+.player-round-dot.is-inactive {
+  background: #dc2626;
+}
+
+.player-status-properties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.player-no-props {
+  font-size: 12px;
+  color: var(--text);
+  font-style: italic;
+}
+
+.player-prop-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
 }
 
 .hero {

@@ -18,12 +18,12 @@ function gameSetup(numberOfPlayers = 3) {
 
   let startingMoney = 28000; // Default starting money for each player
 
-  if (numberOfPlayers === 3) {
+  if (numberOfPlayers <= 3) {
     startingMoney = 28000;
   } else if (numberOfPlayers === 4) {
     startingMoney = 21000;
   }
-  else if (numberOfPlayers === 5) {
+  else if (numberOfPlayers >= 5) {
     startingMoney = 17000;
   }
 
