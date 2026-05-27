@@ -1,5 +1,5 @@
 import Player from "./player.js";
-import generateDeck from "./deck.js";
+import generatePropertyDeck, { generateMoneyDeck } from "./deck.js";
 
 
 
@@ -11,7 +11,8 @@ function gameSetup(numberOfPlayers = 3) {
     players.push(new Player(`Player ${i}`));
   }
 
-  const deck = generateDeck();
+  const deck = generatePropertyDeck();
+  const moneyDeck = generateMoneyDeck(30, 0, 15000, 1000);
 
 
   console.log("Players:", players);
@@ -41,9 +42,11 @@ function gameSetup(numberOfPlayers = 3) {
   return {
     players,
     deck,
+    moneyDeck,
     startingMoney,
     round: 1,
     stage: "Auction",
+    nextAuctionStarter: 1,
   };
 }
 

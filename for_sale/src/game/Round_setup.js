@@ -1,17 +1,19 @@
-
-
 function Round_setup() {
- let roundNumber = 0; // Initialize the round number
- let rooundPhases = ["Auction Phase", "Selling Phase", "End of Round"]; 
-        roundNumber++;
-        console.log(`Starting Round ${roundNumber}`);
-        // Additional logic to set up the round can be added here
-    }
-
-    this.getRoundNumber = function() {
-        return roundNumber;
-    }
-
+    this.roundNumber = 0
+    this.roundPhases = ['Auction Phase', 'Selling Phase', 'End of Round']
 }
 
-export default Round_setup;
+Round_setup.prototype.startNextRound = function () {
+    this.roundNumber += 1
+    return this.roundNumber
+}
+
+Round_setup.prototype.getRoundNumber = function () {
+    return this.roundNumber
+}
+
+Round_setup.prototype.getRoundPhases = function () {
+    return [...this.roundPhases]
+}
+
+export default Round_setup
