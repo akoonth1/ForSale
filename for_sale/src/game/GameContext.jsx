@@ -211,6 +211,8 @@ export function GameProvider({ children, numberOfPlayers = 3 }) {
         setJoinFeedback('Active player slots are full. You joined as a spectator.')
       } else if (reason === 'seat_taken') {
         setJoinFeedback('That seat is already taken. Choose a different player number or join as spectator.')
+      } else if (reason === 'room_reset') {
+        setJoinFeedback('Room was reset. Choose a seat again to rejoin as an active player.')
       } else {
         setJoinFeedback('')
       }
@@ -329,6 +331,24 @@ export function GameProvider({ children, numberOfPlayers = 3 }) {
           desiredPlayerNumber,
           roomId,
         })
+      },
+      resetRoom() {
+        const socket = socketRef.current
+
+        if (socket?.connected) {
+          socket.emit('game:reset_room')
+          return
+        }
+
+        const nextRoomId = String(gameState.roomId || DEFAULT_ROOM_ID)
+        const playerCount = Math.max(3, gameState.players?.length || numberOfPlayers || 3)
+        const nextState = createInitialRoomState(nextRoomId, playerCount)
+
+        writeLocalRoomState(nextRoomId, nextState)
+        setGameState(nextState)
+        setCurrentPlayerNumber(null)
+        setIsActivePlayer(false)
+        setJoinFeedback('Room reset in local mode. Choose a seat again to rejoin as an active player.')
       },
       placeBid(amount) {
         const socket = socketRef.current

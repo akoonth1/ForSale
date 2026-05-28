@@ -6,7 +6,7 @@ import { startSaleRound, dealSaleRound, processPlayProperty } from '../src/game/
 
 const PORT = process.env.PORT || 3001
 const MIN_PLAYERS = 3
-const DEBUG_DUMMY_USER_COUNT = 2
+const DEBUG_DUMMY_USER_COUNT = Number(process.env.DEBUG_DUMMY_USER_COUNT ?? 0)
 const ROOM_IDS = ['1', '2', '3']
 const DEFAULT_ROOM_ID = '1'
 
@@ -209,6 +209,23 @@ function emitPresence(roomId) {
   })
 }
 
+function resetRoomAssignments(roomState, roomId) {
+  const roomSocketIds = io.sockets.adapter.rooms.get(roomId)
+  if (!roomSocketIds) return
+
+  for (const roomSocketId of roomSocketIds) {
+    roomState.playerAssignments.set(roomSocketId, null)
+    const roomSocket = io.sockets.sockets.get(roomSocketId)
+    roomSocket?.emit('player:assigned', {
+      playerNumber: null,
+      isActivePlayer: false,
+      joined: true,
+      reason: 'room_reset',
+      roomId,
+    })
+  }
+}
+
 function moveSocketToRoom(socket, nextRoomIdRaw) {
   const nextRoomId = normalizeRoomId(nextRoomIdRaw)
   const currentRoomId = socketRoomAssignments.get(socket.id)
@@ -337,6 +354,26 @@ io.on('connection', (socket) => {
       roomId: activeRoomId,
     })
     emitGameState(activeRoomId)
+  })
+
+  socket.on('game:reset_room', () => {
+    const activeRoomId = socketRoomAssignments.get(socket.id)
+    const activeRoomState = activeRoomId ? roomStates.get(activeRoomId) : null
+    if (!activeRoomState || !activeRoomId) return
+
+    const playerNumber = activeRoomState.playerAssignments.get(socket.id)
+    if (playerNumber !== 1) {
+      socket.emit('game:error', { message: 'Only Player 1 can reset the room.' })
+      return
+    }
+
+    const numberOfPlayers = activeRoomState.sharedState.game.players.length
+    resetGame(activeRoomState, numberOfPlayers)
+    resetRoomAssignments(activeRoomState, activeRoomId)
+
+    emitTablePermissions(activeRoomState)
+    emitGameState(activeRoomId)
+    emitPresence(activeRoomId)
   })
 
   socket.on('game:place_bid', (payload) => {

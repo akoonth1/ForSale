@@ -25,6 +25,7 @@ function App() {
     joinFeedback = '',
     currentPlayerNumber = null,
     joinGame,
+    resetRoom,
     selectRoom,
     placeBid,
     fold,
@@ -102,6 +103,29 @@ function App() {
   const effectiveSelectedSeat = selectableSeats.includes(Number(selectedSeat))
     ? String(selectedSeat)
     : (selectableSeats[0] ? String(selectableSeats[0]) : '')
+  const finalStandings = [...players]
+    .map((player, index) => {
+      const propertyValue = (player.propertiesOwned ?? []).reduce((sum, property) => sum + (property?.value ?? 0), 0)
+      const totalValue = (player.money ?? 0) + propertyValue
+
+      return {
+        playerNumber: index + 1,
+        player,
+        propertyValue,
+        totalValue,
+      }
+    })
+    .sort((a, b) => {
+      if (b.totalValue !== a.totalValue) return b.totalValue - a.totalValue
+      return b.player.money - a.player.money
+    })
+
+  const topTotal = finalStandings[0]?.totalValue ?? 0
+  const winningPlayers = finalStandings.filter((entry) => entry.totalValue === topTotal)
+  const winningLabel = winningPlayers.length === 1
+    ? `Player ${winningPlayers[0]?.playerNumber} wins!`
+    : `Tie between ${winningPlayers.map((entry) => `Player ${entry.playerNumber}`).join(' and ')}`
+  const canPlayAgain = connectionStatus !== 'connected' || currentPlayerNumber === 1
 
   function adjustProposed(delta) {
     if (!isMyTurn) return
@@ -136,6 +160,24 @@ function App() {
       desiredPlayerNumber,
       roomId,
     })
+  }
+
+  function handleResetRoom() {
+    if (currentPlayerNumber !== 1) return
+
+    const shouldReset = window.confirm('Reset this room and clear all player seats?')
+    if (!shouldReset) return
+
+    resetRoom?.()
+  }
+
+  function handlePlayAgain() {
+    if (!canPlayAgain) return
+
+    const shouldRestart = window.confirm('Start a new game in this room? This will reset player seats.')
+    if (!shouldRestart) return
+
+    resetRoom?.()
   }
 
   if (!hasJoined) {
@@ -251,6 +293,11 @@ function App() {
   return (
     <>
       <header className="game-stage-bar">
+        {currentPlayerNumber === 1 && (
+          <button type="button" className="reset-room-btn" onClick={handleResetRoom}>
+            Reset Room
+          </button>
+        )}
         <p className="game-stage-label">{roundStageLabel}</p>
         <p className="game-stage-presence">Room {roomId}</p>
         <p className="game-stage-presence">
@@ -372,7 +419,7 @@ function App() {
 
       {stage === 'Selling' && (
         <>
-          <div className="bid-controls">
+          <div className="bid-controls bid-controls-wide">
             {salePhase === 'resolved' ? (
               <p className="bid-label">Sale resolved. Next sale round starting soon...</p>
             ) : (
@@ -394,7 +441,7 @@ function App() {
             </div>
           ))}
 
-          <div className="bid-controls">
+          <div className="bid-controls bid-controls-wide">
             {isActivePlayer && canPlayProperty && (
               <>
                 <p className="bid-label">Choose one property card to play:</p>
@@ -435,9 +482,33 @@ function App() {
       )}
 
       {stage === 'Complete' && (
-        <div className="bid-controls">
-          <p className="bid-label">Game complete. Final totals are shown below.</p>
-        </div>
+        <section className="complete-panel">
+          <p className="complete-overline">Game Complete</p>
+          <h2 className="complete-title">{winningLabel}</h2>
+          <p className="complete-subtitle">Final rankings by total value:</p>
+
+          <div className="complete-standings">
+            {finalStandings.map((entry) => (
+              <p key={`final-standing-${entry.playerNumber}`} className="complete-standing-row">
+                #{finalStandings.findIndex((item) => item.playerNumber === entry.playerNumber) + 1} Player {entry.playerNumber}
+                {' · '}Total ${entry.totalValue.toLocaleString()}
+              </p>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="play-again-btn"
+            onClick={handlePlayAgain}
+            disabled={!canPlayAgain}
+          >
+            Play Again
+          </button>
+
+          {!canPlayAgain && (
+            <p className="complete-subtitle">Only Player 1 can start the next game for this room.</p>
+          )}
+        </section>
       )}
 
       <footer className="player-status-bar">
